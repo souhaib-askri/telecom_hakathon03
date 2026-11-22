@@ -36,6 +36,7 @@ size = Vector2(140, 80)
 size = Vector2(340, 160)
 
 [node name="ScrapboundMain" type="Node2D" groups=["Main"]]
+y_sort_enabled = true
 script = ExtResource("1_script")
 
 [node name="MapEnvironment" type="Node2D" parent="."]
@@ -60,10 +61,6 @@ offset_right = 5632.0
 offset_bottom = 1536.0
 color = Color(0.04, 0.06, 0.09, 0.12)
 
-[node name="CentralCommCore1" type="Sprite2D" parent="MapEnvironment"]
-position = Vector2(1408, 650)
-scale = Vector2(0.65, 0.65)
-texture = ExtResource("11_comm_core")
 
 [node name="P1RefineryPad" type="Sprite2D" parent="MapEnvironment"]
 position = Vector2(1050, 860)
@@ -90,10 +87,6 @@ position = Vector2(1050, 770)
 scale = Vector2(0.45, 0.45)
 texture = ExtResource("16_jbox")
 
-[node name="CentralCommCore2" type="Sprite2D" parent="MapEnvironment"]
-position = Vector2(4224, 650)
-scale = Vector2(0.65, 0.65)
-texture = ExtResource("11_comm_core")
 
 [node name="P2RefineryPad" type="Sprite2D" parent="MapEnvironment"]
 position = Vector2(3866, 860)
@@ -247,11 +240,11 @@ collision_mask = 7
 shape = SubResource("RectangleShape2D_car_sedan")
 
 [node name="Tower1" parent="." instance=ExtResource("2_tower")]
-position = Vector2(1408, 860)
+position = Vector2(1408, 810)
 tower_id = 1
 
 [node name="Tower2" parent="." instance=ExtResource("2_tower")]
-position = Vector2(4224, 860)
+position = Vector2(4224, 810)
 tower_id = 2
 
 [node name="Recycler1" parent="." instance=ExtResource("4_recycler")]

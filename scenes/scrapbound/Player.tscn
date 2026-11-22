@@ -64,6 +64,7 @@ height = 44.0
 bg_color = Color(0.2, 0.85, 0.35, 1)
 
 [node name="ScrapboundPlayer" type="CharacterBody2D" groups=["Players"]]
+y_sort_enabled = true
 collision_layer = 2
 collision_mask = 133
 script = ExtResource("1_script")
