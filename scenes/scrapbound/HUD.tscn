@@ -316,10 +316,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -270.0
-offset_top = -80.0
-offset_right = 270.0
-offset_bottom = -4.0
+offset_left = -206.0
+offset_top = -78.0
+offset_right = 206.0
+offset_bottom = -6.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
@@ -328,10 +328,10 @@ mouse_filter = 2
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = -2.0
-offset_bottom = 16.0
+offset_top = 0.0
+offset_bottom = 18.0
 grow_horizontal = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 alignment = 1
 
 [node name="HeartsBox" type="HBoxContainer" parent="MinecraftHotbarArea/StatusRow"]
@@ -348,7 +348,7 @@ text = "BIO:"
 [node name="HealthHeartsContainer" type="HBoxContainer" parent="MinecraftHotbarArea/StatusRow/HeartsBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 1
 
 [node name="MyHealthVal" type="Label" parent="MinecraftHotbarArea/StatusRow/HeartsBox"]
 unique_name_in_owner = true
@@ -363,7 +363,7 @@ layout_mode = 2
 
 [node name="TimerLabel" type="Label" parent="MinecraftHotbarArea/StatusRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(50, 0)
+custom_minimum_size = Vector2(44, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.88, 0.3, 1)
 theme_override_fonts/font = ExtResource("2_font_bold")
@@ -373,7 +373,7 @@ horizontal_alignment = 1
 
 [node name="XPProgressBar" type="TextureProgressBar" parent="MinecraftHotbarArea/StatusRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(80, 8)
+custom_minimum_size = Vector2(56, 6)
 layout_mode = 2
 size_flags_vertical = 4
 value = 100.0
@@ -402,7 +402,7 @@ text = "TOWER:"
 [node name="TowerArmorContainer" type="HBoxContainer" parent="MinecraftHotbarArea/StatusRow/ArmorBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 1
 
 [node name="MyTowerVal" type="Label" parent="MinecraftHotbarArea/StatusRow/ArmorBox"]
 unique_name_in_owner = true
@@ -418,15 +418,15 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -54.0
+offset_top = -48.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_constants/separation = 4
+theme_override_constants/separation = 3
 alignment = 1
 
 [node name="Slot1_Weapon" type="Button" parent="MinecraftHotbarArea/HotbarHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(62, 52)
+custom_minimum_size = Vector2(47, 44)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_slot_norm")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cyber_hover")
@@ -442,15 +442,15 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0.9, 1, 1)
 theme_override_fonts/font = ExtResource("2_font_bold")
-theme_override_font_sizes/font_size = 7
-text = "⚡ WPN [1]
-Basic"
+theme_override_font_sizes/font_size = 6
+text = "⚡ WPN
+[1]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Slot2_Wall" type="Button" parent="MinecraftHotbarArea/HotbarHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(62, 52)
+custom_minimum_size = Vector2(47, 44)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_slot_norm")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cyber_hover")
@@ -465,15 +465,15 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.2, 0.95, 0.5, 1)
 theme_override_fonts/font = ExtResource("2_font_bold")
-theme_override_font_sizes/font_size = 7
-text = "🛡 WALL [2]
-2 Mats"
+theme_override_font_sizes/font_size = 6
+text = "🛡 WALL
+[2]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Slot3_Tower" type="Button" parent="MinecraftHotbarArea/HotbarHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(62, 52)
+custom_minimum_size = Vector2(47, 44)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_slot_norm")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cyber_hover")
@@ -488,15 +488,15 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0.85, 1, 1)
 theme_override_fonts/font = ExtResource("2_font_bold")
-theme_override_font_sizes/font_size = 7
-text = "📡 TURRET [3]
-2 Fe + 1 Pl"
+theme_override_font_sizes/font_size = 6
+text = "📡 TURRET
+[3]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Slot4_Refine" type="Button" parent="MinecraftHotbarArea/HotbarHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(62, 52)
+custom_minimum_size = Vector2(47, 44)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_slot_norm")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cyber_hover")
@@ -511,15 +511,15 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_fonts/font = ExtResource("2_font_bold")
-theme_override_font_sizes/font_size = 7
-text = "♻ RECYCLE
+theme_override_font_sizes/font_size = 6
+text = "♻ REFINE
 [4]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Slot5_SMG" type="Button" parent="MinecraftHotbarArea/HotbarHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(62, 52)
+custom_minimum_size = Vector2(47, 44)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_slot_norm")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cyber_hover")
@@ -534,7 +534,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
 theme_override_fonts/font = ExtResource("2_font_bold")
-theme_override_font_sizes/font_size = 7
+theme_override_font_sizes/font_size = 6
 text = "⚡ SMG
 [5]"
 horizontal_alignment = 1
@@ -542,7 +542,7 @@ vertical_alignment = 1
 
 [node name="Slot6_Cannon" type="Button" parent="MinecraftHotbarArea/HotbarHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(62, 52)
+custom_minimum_size = Vector2(47, 44)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_slot_norm")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cyber_hover")
@@ -557,7 +557,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
 theme_override_fonts/font = ExtResource("2_font_bold")
-theme_override_font_sizes/font_size = 7
+theme_override_font_sizes/font_size = 6
 text = "💥 CANNON
 [6]"
 horizontal_alignment = 1
@@ -565,7 +565,7 @@ vertical_alignment = 1
 
 [node name="Slot7_Mats" type="Panel" parent="MinecraftHotbarArea/HotbarHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(62, 52)
+custom_minimum_size = Vector2(47, 44)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_slot_norm")
 
@@ -579,17 +579,17 @@ grow_vertical = 2
 theme_override_colors/font_color = Color(0.7, 0.85, 1, 1)
 theme_override_fonts/font = ExtResource("3_font_reg")
 theme_override_font_sizes/font_size = 6
-text = "W:0 Fe:0
-Pl:0"
+text = "🌲0 ⚙0
+🧪0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="BtnOpenCraft" type="Button" parent="MinecraftHotbarArea/HotbarHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 52)
+custom_minimum_size = Vector2(53, 44)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font_bold")
-theme_override_font_sizes/font_size = 7
+theme_override_font_sizes/font_size = 6
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_cyber")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cyber_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_cyber_press")
@@ -599,10 +599,10 @@ text = "⚙ SYNTH
 [node name="HotbarActiveFrame" type="TextureRect" parent="MinecraftHotbarArea"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 6.0
-offset_top = 22.0
-offset_right = 68.0
-offset_bottom = 74.0
+offset_left = 1.0
+offset_top = 26.0
+offset_right = 48.0
+offset_bottom = 70.0
 mouse_filter = 2
 texture = ExtResource("6_slot_act")
 expand_mode = 1
@@ -612,10 +612,10 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -140.0
-offset_right = 144.0
-offset_bottom = -12.0
+offset_left = 8.0
+offset_top = -118.0
+offset_right = 108.0
+offset_bottom = -18.0
 grow_vertical = 0
 mouse_filter = 0
 
@@ -643,8 +643,9 @@ expand_mode = 1
 [node name="BtnDpadUp" type="Button" parent="MinecraftDpad/JoystickBase"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 48.0
-offset_right = 80.0
+offset_left = 36.0
+offset_top = 4.0
+offset_right = 64.0
 offset_bottom = 32.0
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_press")
@@ -655,9 +656,10 @@ expand_icon = true
 [node name="BtnDpadLeft" type="Button" parent="MinecraftDpad/JoystickBase"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = 48.0
+offset_left = 4.0
+offset_top = 36.0
 offset_right = 32.0
-offset_bottom = 80.0
+offset_bottom = 64.0
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_press")
 icon = ExtResource("9_arr_l")
@@ -667,10 +669,10 @@ expand_icon = true
 [node name="BtnDpadCenter" type="Button" parent="MinecraftDpad/JoystickBase"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 48.0
-offset_top = 48.0
-offset_right = 80.0
-offset_bottom = 80.0
+offset_left = 36.0
+offset_top = 36.0
+offset_right = 64.0
+offset_bottom = 64.0
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_press")
 icon = ExtResource("21_ic_dots")
@@ -680,10 +682,10 @@ expand_icon = true
 [node name="BtnDpadRight" type="Button" parent="MinecraftDpad/JoystickBase"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 96.0
-offset_top = 48.0
-offset_right = 128.0
-offset_bottom = 80.0
+offset_left = 68.0
+offset_top = 36.0
+offset_right = 96.0
+offset_bottom = 64.0
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_press")
 icon = ExtResource("10_arr_r")
@@ -693,10 +695,10 @@ expand_icon = true
 [node name="BtnDpadDown" type="Button" parent="MinecraftDpad/JoystickBase"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 48.0
-offset_top = 96.0
-offset_right = 80.0
-offset_bottom = 128.0
+offset_left = 36.0
+offset_top = 68.0
+offset_right = 64.0
+offset_bottom = 96.0
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_press")
 icon = ExtResource("8_arr_d")
@@ -706,10 +708,10 @@ expand_icon = true
 [node name="JoystickKnob" type="Panel" parent="MinecraftDpad/JoystickBase"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 38.0
-offset_top = 38.0
-offset_right = 90.0
-offset_bottom = 90.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = 70.0
+offset_bottom = 70.0
 mouse_filter = 2
 
 [node name="KnobTex" type="TextureRect" parent="MinecraftDpad/JoystickBase/JoystickKnob"]
@@ -730,27 +732,22 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -160.0
-offset_top = -140.0
-offset_right = -16.0
-offset_bottom = -12.0
+offset_left = -108.0
+offset_top = -118.0
+offset_right = -8.0
+offset_bottom = -18.0
 grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 2
 
 [node name="BtnShoot" type="Button" parent="MinecraftActions"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(56, 56)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -60.0
-offset_top = -60.0
-grow_horizontal = 0
-grow_vertical = 0
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 0
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 98.0
+offset_bottom = 98.0
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_fire")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_fire_press")
 icon = ExtResource("17_ic_wpn")
@@ -759,19 +756,12 @@ expand_icon = true
 
 [node name="BtnJump" type="Button" parent="MinecraftActions"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(44, 44)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -116.0
-offset_top = -48.0
-offset_right = -72.0
-offset_bottom = -4.0
-grow_horizontal = 0
-grow_vertical = 0
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 0
+offset_left = 4.0
+offset_top = 54.0
+offset_right = 44.0
+offset_bottom = 94.0
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_press")
 icon = ExtResource("18_ic_surge")
@@ -780,19 +770,12 @@ expand_icon = true
 
 [node name="BtnBuild" type="Button" parent="MinecraftActions"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(44, 44)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -60.0
-offset_top = -116.0
-offset_right = -16.0
-offset_bottom = -72.0
-grow_horizontal = 0
-grow_vertical = 0
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 0
+offset_left = 52.0
+offset_top = 4.0
+offset_right = 92.0
+offset_bottom = 44.0
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_press")
 icon = ExtResource("19_ic_wall")
@@ -801,19 +784,12 @@ expand_icon = true
 
 [node name="BtnQuickTower" type="Button" parent="MinecraftActions"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(44, 44)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -116.0
-offset_top = -104.0
-offset_right = -72.0
-offset_bottom = -60.0
-grow_horizontal = 0
-grow_vertical = 0
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 0
+offset_left = 4.0
+offset_top = 6.0
+offset_right = 44.0
+offset_bottom = 46.0
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_press")
 icon = ExtResource("20_ic_turret")

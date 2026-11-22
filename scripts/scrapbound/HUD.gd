@@ -197,7 +197,7 @@ func _setup_minecraft_hearts() -> void:
 	heart_icons.clear()
 	for i in range(10):
 		var tr = TextureRect.new()
-		tr.custom_minimum_size = Vector2(13, 13)
+		tr.custom_minimum_size = Vector2(9, 9)
 		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		tr.texture = TEX_HEART_FULL
@@ -211,7 +211,7 @@ func _setup_minecraft_armor() -> void:
 	armor_icons.clear()
 	for i in range(10):
 		var tr = TextureRect.new()
-		tr.custom_minimum_size = Vector2(13, 13)
+		tr.custom_minimum_size = Vector2(9, 9)
 		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		tr.texture = TEX_ARMOR_FULL
@@ -353,7 +353,7 @@ func update_player_ui(
 			display_name = "Welder"
 		elif display_name == "RapidFire":
 			display_name = "PlasmaArc"
-		my_weapon_label.text = "⚡ WPN [1]\n" + display_name
+		my_weapon_label.text = "⚡ %s\n[1]" % display_name
 		
 	var can_wall = (my_inv.get("wood", 0) >= 2 or my_inv.get("plastic", 0) >= 2 or my_inv.get("iron", 0) >= 2)
 	if lbl_wall:
@@ -382,13 +382,13 @@ func update_player_ui(
 
 	if lbl_refine:
 		if scrap_held < 10:
-			lbl_refine.text = "♻\n%d/10" % scrap_held
+			lbl_refine.text = "♻ [4]\n%d/10" % scrap_held
 			lbl_refine.modulate = Color(0.6, 0.6, 0.6, 0.5)
 		elif not is_near_refinery:
-			lbl_refine.text = "🏃\nNEAR (%d)" % scrap_held
+			lbl_refine.text = "🏃 [4]\n(%d)" % scrap_held
 			lbl_refine.modulate = Color(1.0, 0.85, 0.3)
 		else:
-			lbl_refine.text = "♻\nRECYCLE (%d)" % scrap_held
+			lbl_refine.text = "♻ [4]\nREFINE(%d)" % scrap_held
 			lbl_refine.modulate = Color(0.25, 1.0, 0.4)
 			
 	var can_rapid = (my_inv.get("iron", 0) >= 1 and my_inv.get("plastic", 0) >= 1) or (my_inv.get("material_a", 0) >= 1 and my_inv.get("material_b", 0) >= 1)
