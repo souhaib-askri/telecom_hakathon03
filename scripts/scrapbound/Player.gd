@@ -73,6 +73,7 @@ func _ready() -> void:
 	if respawn_label:
 		respawn_label.visible = false
 		
+	set_weapon("Basic")
 	_apply_visual_theme()
 
 func setup_network_authority(peer_id: int, assigned_id: int) -> void:
@@ -250,7 +251,7 @@ func _handle_local_input(delta: float) -> void:
 
 	if want_shoot and shoot_cooldown <= 0.0:
 		shoot_cooldown = shoot_rate
-		weapon_recoil = 5.0 # Crisp recoil kick!
+		weapon_recoil = 3.5 # Electric torch vibration recoil
 		var shoot_dir = aim_direction.normalized() if aim_direction != Vector2.ZERO else (Vector2.LEFT if is_facing_left else Vector2.RIGHT)
 		var shoot_origin = weapon_pivot.global_position + shoot_dir * 36.0
 		request_shoot.rpc_id(1, shoot_origin, shoot_dir)
@@ -302,12 +303,20 @@ func request_shoot(spawn_pos: Vector2, dir: Vector2) -> void:
 	if current_weapon == "Shotgun":
 		var spread_angles = [-0.15, 0.0, 0.15]
 		for a in spread_angles:
-			spawn_bullet_net.rpc(spawn_pos, dir.rotated(a), bullet_damage, bullet_speed, is_piercing, player_id)
+			spawn_bullet_net.rpc(spawn_pos, dir.rotated(a), bullet_damage, bullet_speed, is_piercing, player_id, current_weapon, bullet_range)
+	elif current_weapon == "Basic" or current_weapon == "Welder":
+		# Main concentrated short-range welding arc
+		spawn_bullet_net.rpc(spawn_pos, dir, bullet_damage, bullet_speed, true, player_id, "Welder", bullet_range)
+		# Secondary welding sparks fanning out in close combat
+		var s1 = randf_range(-0.16, -0.04)
+		var s2 = randf_range(0.04, 0.16)
+		spawn_bullet_net.rpc(spawn_pos, dir.rotated(s1), int(bullet_damage * 0.4), bullet_speed * 0.88, true, player_id, "Welder", bullet_range * 0.9)
+		spawn_bullet_net.rpc(spawn_pos, dir.rotated(s2), int(bullet_damage * 0.4), bullet_speed * 0.88, true, player_id, "Welder", bullet_range * 0.9)
 	else:
-		spawn_bullet_net.rpc(spawn_pos, dir, bullet_damage, bullet_speed, is_piercing, player_id)
+		spawn_bullet_net.rpc(spawn_pos, dir, bullet_damage, bullet_speed, is_piercing, player_id, current_weapon, bullet_range)
 
 @rpc("any_peer", "call_local", "reliable")
-func spawn_bullet_net(spawn_pos: Vector2, dir: Vector2, dmg: int, spd: float, pierce: bool, shooter_id: int) -> void:
+func spawn_bullet_net(spawn_pos: Vector2, dir: Vector2, dmg: int, spd: float, pierce: bool, shooter_id: int, weapon_name: String = "Welder", custom_range: float = 82.0) -> void:
 	var b = bullet_scene.instantiate()
 	b.global_position = spawn_pos
 	b.direction = dir
@@ -315,16 +324,32 @@ func spawn_bullet_net(spawn_pos: Vector2, dir: Vector2, dmg: int, spd: float, pi
 	b.speed = spd
 	b.is_piercing = pierce
 	b.shooter_player_id = shooter_id
-	b.set_bullet_color(Color(0.3, 0.85, 1.0) if shooter_id == 1 else Color(1.0, 0.6, 0.2))
+	
+	if weapon_name == "Welder" or weapon_name == "Basic":
+		if b.has_method("setup_welder_arc"):
+			b.setup_welder_arc(shooter_id, custom_range)
+	else:
+		b.set_bullet_color(Color(0.3, 0.85, 1.0) if shooter_id == 1 else Color(1.0, 0.6, 0.2))
+		if custom_range > 0.0 and "max_range" in b:
+			b.max_range = custom_range
+
 	var main = get_parent()
 	if main:
 		main.add_child(b)
 		var shooter_node = main.get_node_or_null("Player%d" % shooter_id) as ScrapboundPlayer
 		if shooter_node and is_instance_valid(shooter_node):
-			shooter_node.weapon_recoil = 6.0
+			shooter_node.weapon_recoil = 3.5
+			if shooter_node.has_node("WeaponPivot/WelderSpark"):
+				var spk = shooter_node.get_node("WeaponPivot/WelderSpark") as Sprite2D
+				spk.visible = true
+				var t = shooter_node.get_tree().create_timer(0.06)
+				t.timeout.connect(func(): if is_instance_valid(spk): spk.visible = false)
 	
 	if shoot_audio:
-		shoot_audio.pitch_scale = randf_range(0.95, 1.05)
+		if weapon_name == "Welder" or weapon_name == "Basic":
+			shoot_audio.pitch_scale = randf_range(1.15, 1.35)
+		else:
+			shoot_audio.pitch_scale = randf_range(0.95, 1.05)
 		shoot_audio.play()
 
 func take_damage_server(amount: int) -> void:
@@ -421,28 +446,33 @@ func set_weapon(weapon_type: String) -> void:
 		shoot_rate = 0.11
 		bullet_damage = 18
 		bullet_speed = 620.0
+		bullet_range = 0.0
 		is_piercing = false
 	elif weapon_type == "HighDamage":
 		shoot_rate = 0.38
 		bullet_damage = 60
 		bullet_speed = 460.0
+		bullet_range = 0.0
 		is_piercing = true
 	elif weapon_type == "Shotgun":
 		shoot_rate = 0.34
 		bullet_damage = 22
 		bullet_speed = 480.0
+		bullet_range = 0.0
 		is_piercing = false
 	elif weapon_type == "PlasmaSniper":
 		shoot_rate = 0.52
 		bullet_damage = 85
 		bullet_speed = 720.0
+		bullet_range = 0.0
 		is_piercing = true
 	else:
 		current_weapon = "Basic"
-		shoot_rate = 0.22
-		bullet_damage = 25
-		bullet_speed = 520.0
-		is_piercing = false
+		shoot_rate = 0.12
+		bullet_damage = 22
+		bullet_speed = 380.0
+		bullet_range = 82.0
+		is_piercing = true
 	weapon_upgraded.emit(player_id, current_weapon)
 
 func add_resource(res_name: String, amount: int = 1) -> void:

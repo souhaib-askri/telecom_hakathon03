@@ -969,13 +969,13 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.9, 1, 1)
 theme_override_fonts/font = ExtResource("2_font_bold")
 theme_override_font_sizes/font_size = 8
-text = "⚡ RAPID-FIRE SMG"
+text = "⚡ OVERCLOCKED PLASMA WELDER"
 
 [node name="Cost" type="Label" parent="CraftingPanel/VBoxCraft/VBoxWeapons/CardSMG/HBox/VBoxDesc"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font_reg")
 theme_override_font_sizes/font_size = 7
-text = "Cost: 1 Iron + 1 Plastic (+200% Fire Rate)"
+text = "Cost: 1 Iron + 1 Plastic (High-Heat Rapid Arc)"
 
 [node name="BtnInvCraftSMG" type="Button" parent="CraftingPanel/VBoxCraft/VBoxWeapons/CardSMG/HBox"]
 unique_name_in_owner = true

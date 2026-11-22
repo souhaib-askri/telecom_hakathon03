@@ -18,7 +18,7 @@ var bullet_scene = preload("res://scenes/entities/Bullet.tscn")
 var current_scrap_pile: Node2D = null
 var is_welding: bool = false
 var shoot_cooldown: float = 0.0
-const SHOOT_RATE: float = 0.2
+const SHOOT_RATE: float = 0.12
 
 var is_invulnerable: bool = false
 var invulnerability_timer: float = 0.0
@@ -183,17 +183,19 @@ func _on_scrap_purified(_pos: Vector2) -> void:
 func shoot_weapon() -> void:
 	shoot_cooldown = SHOOT_RATE
 	
-	# Spawn bullet along current aim direction (locked or aimed)
+	# Spawn short-range welding arc / sparks along current aim direction
 	var b = bullet_scene.instantiate()
 	b.global_position = global_position + current_aim_dir * 18.0
 	b.direction = current_aim_dir
+	if b.has_method("setup_welder_arc"):
+		b.setup_welder_arc(82.0)
 	get_parent().add_child(b)
 	
 	if anim_sprite and anim_sprite.animation != "weld":
 		anim_sprite.play("shoot")
 	
 	if shoot_audio:
-		shoot_audio.pitch_scale = randf_range(0.95, 1.05)
+		shoot_audio.pitch_scale = randf_range(1.15, 1.35)
 		shoot_audio.play()
 		
 	if muzzle_flash:

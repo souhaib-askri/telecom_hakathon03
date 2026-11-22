@@ -348,7 +348,12 @@ func update_player_ui(
 		
 	# Update Tactical Hotbar Slots
 	if my_weapon_label:
-		my_weapon_label.text = "⚡ WPN [1]\n" + my_wpn
+		var display_name = my_wpn
+		if display_name == "Basic":
+			display_name = "Welder"
+		elif display_name == "RapidFire":
+			display_name = "PlasmaArc"
+		my_weapon_label.text = "⚡ WPN [1]\n" + display_name
 		
 	var can_wall = (my_inv.get("wood", 0) >= 2 or my_inv.get("plastic", 0) >= 2 or my_inv.get("iron", 0) >= 2)
 	if lbl_wall:
