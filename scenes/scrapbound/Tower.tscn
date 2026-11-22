@@ -1,8 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://tower_scrapbound01"]
+[gd_scene format=3 uid="uid://x42e60n01bwv"]
 
-[ext_resource type="Script" path="res://scripts/scrapbound/Tower.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/sprites/props/telecom_tower_dq2l.png" id="2_fallback"]
-[ext_resource type="Texture2D" path="res://assets/sprites/weapons/shockwave_ring.png" id="4_glow"]
+[ext_resource type="Script" uid="uid://bwnsf5w2t23si" path="res://scripts/scrapbound/Tower.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://d3anlnaf883bw" path="res://assets/sprites/props/telecom_tower_dq2l.png" id="2_fallback"]
+[ext_resource type="Texture2D" uid="uid://cbsw6idy2myvo" path="res://assets/sprites/weapons/shockwave_ring.png" id="4_glow"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(70, 50)
@@ -10,27 +10,27 @@ size = Vector2(70, 50)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
 bg_color = Color(0.18, 0.8, 0.44, 1)
 
-[node name="Tower" type="StaticBody2D" groups=["Towers"]]
+[node name="Tower" type="StaticBody2D" unique_id=1579338621 groups=["Towers"]]
 collision_layer = 129
 collision_mask = 6
 script = ExtResource("1_script")
 
-[node name="EmissionGlow" type="Sprite2D" parent="."]
+[node name="EmissionGlow" type="Sprite2D" parent="." unique_id=1845201401]
 modulate = Color(0.2, 0.85, 1, 0.8)
 position = Vector2(0, -20)
 scale = Vector2(0.8, 0.8)
 texture = ExtResource("4_glow")
 
-[node name="TowerSprite" type="Sprite2D" parent="."]
+[node name="TowerSprite" type="Sprite2D" parent="." unique_id=343909477]
 position = Vector2(0, -48)
 scale = Vector2(0.24, 0.24)
 texture = ExtResource("2_fallback")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 68)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2117543333]
+position = Vector2(1, 97)
 shape = SubResource("RectangleShape2D_1")
 
-[node name="HealthBar" type="ProgressBar" parent="."]
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1702468848]
 offset_left = -44.0
 offset_top = -215.0
 offset_right = 44.0
@@ -40,7 +40,7 @@ max_value = 1000.0
 value = 1000.0
 show_percentage = false
 
-[node name="NameLabel" type="Label" parent="."]
+[node name="NameLabel" type="Label" parent="." unique_id=983265123]
 offset_left = -90.0
 offset_top = -233.0
 offset_right = 90.0
@@ -49,5 +49,5 @@ theme_override_font_sizes/font_size = 11
 text = "P1 TELECOM TOWER"
 horizontal_alignment = 1
 
-[node name="SpawnPoint" type="Marker2D" parent="."]
+[node name="SpawnPoint" type="Marker2D" parent="." unique_id=1910448760]
 position = Vector2(65, 68)

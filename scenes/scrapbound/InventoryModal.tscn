@@ -1,0 +1,507 @@
+[gd_scene load_steps=20 format=3 uid="uid://inventory_modal_001"]
+
+[ext_resource type="Script" path="res://scripts/scrapbound/InventoryModal.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons/icon_scrap_bag.png" id="2_scrap"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons/icon_wood.png" id="3_wood"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons/icon_iron.png" id="4_iron"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons/icon_plastic.png" id="5_plastic"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons/icon_battery.png" id="6_battery"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons/icon_welder.png" id="7_welder"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons/icon_wrench.png" id="8_wrench"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons/icon_turret.png" id="9_turret"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons/icon_rifle.png" id="10_rifle"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons/icon_shotgun.png" id="11_shotgun"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons/icon_flamethrower.png" id="12_flame"]
+[ext_resource type="FontFile" path="res://assets/fonts/JetBrainsMono-Bold.ttf" id="13_font_bold"]
+[ext_resource type="FontFile" path="res://assets/fonts/JetBrainsMono-Regular.ttf" id="14_font_reg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.04, 0.08, 0.14, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.0, 0.85, 1.0, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0.0, 0.5, 0.8, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_col"]
+bg_color = Color(0.06, 0.11, 0.19, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.15, 0.42, 0.68, 0.55)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_action"]
+bg_color = Color(0.06, 0.22, 0.38, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.75, 1.0, 0.8)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_turret"]
+bg_color = Color(0.08, 0.40, 0.25, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.95, 0.50, 0.9)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_close"]
+bg_color = Color(0.25, 0.08, 0.10, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1.0, 0.35, 0.40, 0.8)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="InventoryModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -270.0
+offset_top = -155.0
+offset_right = 270.0
+offset_bottom = 155.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = -12.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="HBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Panel/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.0, 0.9, 1.0, 1)
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 10
+text = "🎒 TACTICAL INVENTORY // OPERATOR FIELD GEAR"
+
+[node name="BtnClose" type="Button" parent="Panel/VBox/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 20)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_close")
+text = "✕ CLOSE"
+
+[node name="Columns" type="HBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="ColResources" type="PanelContainer" parent="Panel/VBox/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_col")
+
+[node name="Margin" type="MarginContainer" parent="Panel/VBox/Columns/ColResources"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="VBox" type="VBoxContainer" parent="Panel/VBox/Columns/ColResources/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ColTitle" type="Label" parent="Panel/VBox/Columns/ColResources/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.85, 1, 1)
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 8
+text = "📦 SORTED RESOURCES"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBox/Columns/ColResources/Margin/VBox"]
+layout_mode = 2
+
+[node name="ItemScrap" type="HBoxContainer" parent="Panel/VBox/Columns/ColResources/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemScrap"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("2_scrap")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemScrap"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("14_font_reg")
+theme_override_font_sizes/font_size = 7
+text = "Scrap Bags"
+
+[node name="LblScrapCount" type="Label" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemScrap"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 8
+text = "0"
+
+[node name="ItemWood" type="HBoxContainer" parent="Panel/VBox/Columns/ColResources/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemWood"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("3_wood")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemWood"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("14_font_reg")
+theme_override_font_sizes/font_size = 7
+text = "Refined Wood"
+
+[node name="LblWoodCount" type="Label" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemWood"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 8
+text = "0"
+
+[node name="ItemIron" type="HBoxContainer" parent="Panel/VBox/Columns/ColResources/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemIron"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("4_iron")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemIron"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("14_font_reg")
+theme_override_font_sizes/font_size = 7
+text = "Scrap Iron"
+
+[node name="LblIronCount" type="Label" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemIron"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 8
+text = "0"
+
+[node name="ItemPlastic" type="HBoxContainer" parent="Panel/VBox/Columns/ColResources/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemPlastic"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("5_plastic")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemPlastic"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("14_font_reg")
+theme_override_font_sizes/font_size = 7
+text = "Polymer Plastic"
+
+[node name="LblPlasticCount" type="Label" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemPlastic"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 8
+text = "0"
+
+[node name="ItemBattery" type="HBoxContainer" parent="Panel/VBox/Columns/ColResources/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemBattery"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("6_battery")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemBattery"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("14_font_reg")
+theme_override_font_sizes/font_size = 7
+text = "Lithium Battery"
+
+[node name="LblBatteryCount" type="Label" parent="Panel/VBox/Columns/ColResources/Margin/VBox/ItemBattery"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.6, 1)
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 8
+text = "0"
+
+[node name="ColTools" type="PanelContainer" parent="Panel/VBox/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_col")
+
+[node name="Margin" type="MarginContainer" parent="Panel/VBox/Columns/ColTools"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="VBox" type="VBoxContainer" parent="Panel/VBox/Columns/ColTools/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ColTitle" type="Label" parent="Panel/VBox/Columns/ColTools/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.85, 1, 1)
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 8
+text = "🛡️ DEFENSES"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBox/Columns/ColTools/Margin/VBox"]
+layout_mode = 2
+
+[node name="ItemTurret" type="VBoxContainer" parent="Panel/VBox/Columns/ColTools/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="HBox" type="HBoxContainer" parent="Panel/VBox/Columns/ColTools/Margin/VBox/ItemTurret"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="Panel/VBox/Columns/ColTools/Margin/VBox/ItemTurret/HBox"]
+custom_minimum_size = Vector2(22, 22)
+layout_mode = 2
+texture = ExtResource("9_turret")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Panel/VBox/Columns/ColTools/Margin/VBox/ItemTurret/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("14_font_reg")
+theme_override_font_sizes/font_size = 7
+text = "Sentry Turret"
+
+[node name="LblTurretCount" type="Label" parent="Panel/VBox/Columns/ColTools/Margin/VBox/ItemTurret/HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.5, 1)
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 8
+text = "x0 In Stock"
+
+[node name="BtnDeployTurret" type="Button" parent="Panel/VBox/Columns/ColTools/Margin/VBox/ItemTurret"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 8
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_turret")
+text = "DEPLOY SENTRY [B]"
+
+[node name="ColWeapons" type="PanelContainer" parent="Panel/VBox/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_col")
+
+[node name="Margin" type="MarginContainer" parent="Panel/VBox/Columns/ColWeapons"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="VBox" type="VBoxContainer" parent="Panel/VBox/Columns/ColWeapons/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ColTitle" type="Label" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.85, 1, 1)
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 8
+text = "⚔️ WEAPON SYSTEMS"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox"]
+layout_mode = 2
+
+[node name="CardWelder" type="HBoxContainer" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Icon" type="TextureRect" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardWelder"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("7_welder")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardWelder"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("14_font_reg")
+theme_override_font_sizes/font_size = 7
+text = "RF Welder [1]"
+
+[node name="BtnEquipWelder" type="Button" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardWelder"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 18)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 7
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_action")
+text = "EQUIPPED"
+
+[node name="CardRifle" type="HBoxContainer" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Icon" type="TextureRect" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardRifle"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("10_rifle")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardRifle"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("14_font_reg")
+theme_override_font_sizes/font_size = 7
+text = "Assault Rifle [2]"
+
+[node name="BtnEquipRifle" type="Button" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardRifle"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 18)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 7
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_action")
+text = "CRAFT"
+
+[node name="CardShotgun" type="HBoxContainer" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Icon" type="TextureRect" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardShotgun"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("11_shotgun")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardShotgun"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("14_font_reg")
+theme_override_font_sizes/font_size = 7
+text = "Shotgun [3]"
+
+[node name="BtnEquipShotgun" type="Button" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardShotgun"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 18)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 7
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_action")
+text = "CRAFT"
+
+[node name="CardFlame" type="HBoxContainer" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Icon" type="TextureRect" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardFlame"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("12_flame")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardFlame"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("14_font_reg")
+theme_override_font_sizes/font_size = 7
+text = "Flamethrower [4]"
+
+[node name="BtnEquipFlame" type="Button" parent="Panel/VBox/Columns/ColWeapons/Margin/VBox/CardFlame"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 18)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_font_bold")
+theme_override_font_sizes/font_size = 7
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_action")
+text = "CRAFT"
+
+[node name="FooterHint" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 1)
+theme_override_fonts/font = ExtResource("14_font_reg")
+theme_override_font_sizes/font_size = 7
+text = "💡 Press [TAB] or [I] for Inventory • [1-4] Quick Weapons • [B] Deploy Turret • [E] Sort Scrap"
+horizontal_alignment = 1

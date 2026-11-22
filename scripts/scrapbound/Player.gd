@@ -37,10 +37,14 @@ var inventory: Dictionary = {
 	"battery": 0,
 	"wood": 0,
 	"plastic": 0,
-	"iron": 0
+	"iron": 0,
+	"turrets": 0
 }
 
 var nearby_recycler: Node2D = null
+var nearby_workshop: Node2D = null
+var was_deploy_key_down: bool = false
+var was_skip_day_key_down: bool = false
 
 var mobile_move_vector: Vector2 = Vector2.ZERO
 var is_mobile_shooting: bool = false
@@ -256,13 +260,40 @@ func _handle_local_input(delta: float) -> void:
 		var shoot_origin = weapon_pivot.global_position + shoot_dir * 36.0
 		request_shoot.rpc_id(1, shoot_origin, shoot_dir)
 		
-	# Interact / Refine: E or L
+	# Interact: E or L (Workshop or Recycler)
 	if Input.is_key_pressed(KEY_E) or Input.is_key_pressed(KEY_L):
-		if nearby_recycler and is_instance_valid(nearby_recycler):
-			var main = get_parent() as ScrapboundMain
+		var main = get_parent() as ScrapboundMain
+		if nearby_workshop and is_instance_valid(nearby_workshop):
+			if main and main.hud and main.hud.has_method("open_workshop_modal"):
+				main.hud.open_workshop_modal()
+		elif nearby_recycler and is_instance_valid(nearby_recycler):
 			if main:
 				main.request_recycle.rpc_id(1, nearby_recycler.recycler_id, player_id)
-				
+
+	# Deploy Sentry Turret: B
+	if Input.is_key_pressed(KEY_B):
+		if not was_deploy_key_down:
+			was_deploy_key_down = true
+			deploy_turret_action()
+	else:
+		was_deploy_key_down = false
+
+	# Fast-forward / Skip Day: F
+	if Input.is_key_pressed(KEY_F):
+		if not was_skip_day_key_down:
+			was_skip_day_key_down = true
+			var main = get_parent() as ScrapboundMain
+			if main and main.has_method("request_skip_day_net"):
+				main.request_skip_day_net.rpc_id(1)
+	else:
+		was_skip_day_key_down = false
+
+	# Toggle Inventory Modal: TAB
+	if Input.is_key_pressed(KEY_TAB):
+		var main = get_parent() as ScrapboundMain
+		if main and main.hud and main.hud.has_method("toggle_inventory_modal"):
+			main.hud.toggle_inventory_modal()
+
 	# Switch Weapon: R or X
 	if Input.is_key_pressed(KEY_R) or Input.is_key_pressed(KEY_X):
 		if not was_switch_key_down:
@@ -442,38 +473,53 @@ func sync_respawn_net(spawn_pos: Vector2) -> void:
 
 func set_weapon(weapon_type: String) -> void:
 	current_weapon = weapon_type
-	if weapon_type == "RapidFire":
+	if weapon_type == "RapidFire" or weapon_type == "Rifle":
+		current_weapon = "Rifle"
 		shoot_rate = 0.11
 		bullet_damage = 18
 		bullet_speed = 620.0
 		bullet_range = 0.0
 		is_piercing = false
-	elif weapon_type == "HighDamage":
+	elif weapon_type == "HighDamage" or weapon_type == "Flamethrower":
+		current_weapon = "Flamethrower"
 		shoot_rate = 0.38
 		bullet_damage = 60
 		bullet_speed = 460.0
 		bullet_range = 0.0
 		is_piercing = true
 	elif weapon_type == "Shotgun":
+		current_weapon = "Shotgun"
 		shoot_rate = 0.34
 		bullet_damage = 22
 		bullet_speed = 480.0
 		bullet_range = 0.0
 		is_piercing = false
 	elif weapon_type == "PlasmaSniper":
+		current_weapon = "PlasmaSniper"
 		shoot_rate = 0.52
 		bullet_damage = 85
 		bullet_speed = 720.0
 		bullet_range = 0.0
 		is_piercing = true
 	else:
-		current_weapon = "Basic"
+		current_weapon = "Welder"
 		shoot_rate = 0.12
 		bullet_damage = 22
 		bullet_speed = 380.0
 		bullet_range = 82.0
 		is_piercing = true
 	weapon_upgraded.emit(player_id, current_weapon)
+
+func deploy_turret_action() -> void:
+	if not is_multiplayer_authority():
+		return
+	var main = get_tree().get_first_node_in_group("Main")
+	if not main:
+		main = get_parent() as ScrapboundMain
+	if main and main.has_method("request_deploy_turret"):
+		var shoot_dir = aim_direction.normalized() if aim_direction != Vector2.ZERO else (Vector2.LEFT if is_facing_left else Vector2.RIGHT)
+		var spawn_pos = global_position + shoot_dir * 48.0
+		main.request_deploy_turret.rpc_id(1, player_id, spawn_pos)
 
 func add_resource(res_name: String, amount: int = 1) -> void:
 	var key = res_name.to_lower()

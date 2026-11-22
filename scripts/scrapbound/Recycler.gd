@@ -33,15 +33,15 @@ func _physics_process(delta: float) -> void:
 		return
 		
 	var scrap_held = active_local_player.inventory.get("scrap", 0)
-	if scrap_held >= 10:
+	if scrap_held >= 1:
 		if prompt_label:
 			prompt_label.visible = true
-			prompt_label.text = "♻ RECYCLING %d SCRAPS..." % scrap_held
-			prompt_label.modulate = Color(0.3, 1.0, 0.4)
+			prompt_label.text = "♻ SORTING SCRAP BAG (%d)..." % scrap_held
+			prompt_label.modulate = Color(0.3, 1.0, 0.5)
 			
 		auto_recycle_timer -= delta
 		if auto_recycle_timer <= 0.0:
-			auto_recycle_timer = 0.65
+			auto_recycle_timer = 0.45
 			var main = get_tree().get_first_node_in_group("Main") as ScrapboundMain
 			if not main:
 				main = get_parent() as ScrapboundMain
@@ -50,8 +50,8 @@ func _physics_process(delta: float) -> void:
 	else:
 		if prompt_label:
 			prompt_label.visible = true
-			prompt_label.text = "REFINERY: Need 10 Scraps (%d/10)" % scrap_held
-			prompt_label.modulate = Color(1.0, 0.85, 0.3)
+			prompt_label.text = "GATHER SCRAP TO SORT!"
+			prompt_label.modulate = Color(1.0, 0.7, 0.3)
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is ScrapboundPlayer and body.is_multiplayer_authority():
@@ -87,7 +87,11 @@ func play_recycle_effect_net(reward: String) -> void:
 
 func _show_floating_reward(reward: String) -> void:
 	var lbl = Label.new()
-	var icon = "🌲" if reward == "wood" else ("⚙" if reward == "iron" else "🧪")
+	var icon = "🪵"
+	if reward == "wood": icon = "🪵"
+	elif reward == "iron": icon = "⚙️"
+	elif reward == "plastic": icon = "🧪"
+	elif reward == "battery": icon = "🔋"
 	lbl.text = "%s +1 %s PRODUCED!" % [icon, reward.to_upper()]
 	lbl.modulate = Color(0.3, 1.0, 0.4)
 	lbl.set("theme_override_font_sizes/font_size", 9)

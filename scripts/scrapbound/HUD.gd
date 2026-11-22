@@ -2,6 +2,13 @@ extends Control
 class_name ScrapboundHUD
 
 signal rematch_requested()
+signal skip_day_requested()
+
+# Raid Cycle & Modals
+@onready var raid_phase_label: Label = %RaidPhaseLabel
+@onready var btn_skip_day: Button = %BtnSkipDay
+@onready var workshop_modal: WorkshopModal = %WorkshopModal
+@onready var inventory_modal: InventoryModal = %InventoryModal
 
 # Textures
 const TEX_HEART_FULL = preload("res://assets/sprites/ui/cyber/cyber_pip_health_full.png")
@@ -111,6 +118,8 @@ func _ready() -> void:
 		crafting_panel.visible = false
 	if btn_rematch:
 		btn_rematch.pressed.connect(_on_rematch_pressed)
+	if btn_skip_day:
+		btn_skip_day.pressed.connect(_on_skip_day_pressed)
 		
 	# Setup Minecraft Hearts (10 pixel hearts)
 	_setup_minecraft_hearts()
@@ -296,10 +305,9 @@ func update_player_ui(
 	if my_scrap_label:
 		my_scrap_label.text = "GARBAGE: %d  |  BATTERY: %d" % [my_inv.get("scrap", 0), my_inv.get("battery", 0)]
 	if my_mats_label:
-		my_mats_label.text = "RAW: [Wood:%d Iron:%d Plas:%d]  CRAFT: [A:%d B:%d C:%d D:%d]" % [
+		my_mats_label.text = "RAW: [Wood:%d Iron:%d Plas:%d Batt:%d]  TURRETS: %d" % [
 			my_inv.get("wood", 0), my_inv.get("iron", 0), my_inv.get("plastic", 0),
-			my_inv.get("material_a", 0), my_inv.get("material_b", 0),
-			my_inv.get("material_c", 0), my_inv.get("material_d", 0)
+			my_inv.get("battery", 0), my_inv.get("turrets", 0)
 		]
 		
 	# Update Progress Bars
@@ -661,3 +669,60 @@ func show_results(p1_kills: int, p1_score: int, p1_tower_hp: int, p2_kills: int,
 
 func _on_rematch_pressed() -> void:
 	rematch_requested.emit()
+
+func _on_skip_day_pressed() -> void:
+	skip_day_requested.emit()
+	var main = get_tree().get_first_node_in_group("Main")
+	if not main:
+		main = get_parent().get_parent()
+	if main and main.has_method("request_skip_day_net"):
+		main.request_skip_day_net.rpc_id(1)
+
+func update_day_phase(day_num: int, time_left: float) -> void:
+	if raid_phase_label:
+		var mins = int(time_left) / 60
+		var secs = int(time_left) % 60
+		raid_phase_label.text = "☀️ DAY %02d // PREPARATION [%02d:%02d]" % [day_num, mins, secs]
+		raid_phase_label.modulate = Color(0.3, 1.0, 0.6)
+	if btn_skip_day:
+		btn_skip_day.visible = true
+
+func update_dusk_phase(time_left: float) -> void:
+	if raid_phase_label:
+		var secs = int(time_left)
+		raid_phase_label.text = "⚠️ DUSK WARNING // RAID IN %02d SEC" % secs
+		raid_phase_label.modulate = Color(1.0, 0.6, 0.2)
+	if btn_skip_day:
+		btn_skip_day.visible = false
+
+func update_night_raid_phase(day_num: int, foes_left: int) -> void:
+	if raid_phase_label:
+		raid_phase_label.text = "⚡ NIGHT %d RAID // %d FOES REMAINING" % [day_num, foes_left]
+		raid_phase_label.modulate = Color(1.0, 0.35, 0.45)
+	if btn_skip_day:
+		btn_skip_day.visible = false
+
+func open_workshop_modal() -> void:
+	if workshop_modal:
+		workshop_modal.open_modal()
+
+func close_workshop_modal() -> void:
+	if workshop_modal:
+		workshop_modal.close_modal()
+
+func open_inventory_modal() -> void:
+	if inventory_modal:
+		inventory_modal.open_modal()
+
+func close_inventory_modal() -> void:
+	if inventory_modal:
+		inventory_modal.close_modal()
+
+func toggle_inventory_modal() -> void:
+	if inventory_modal:
+		inventory_modal.toggle_modal()
+
+func show_craft_feedback(success: bool, msg: String) -> void:
+	if workshop_modal:
+		workshop_modal.show_feedback(success, msg)
+

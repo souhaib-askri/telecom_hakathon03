@@ -146,6 +146,13 @@ func _update_ai_target() -> void:
 			var side = 1 if b.global_position.x < 2816.0 else 2
 			if side == my_side and global_position.distance_to(b.global_position) < 80.0:
 				candidates.append(b)
+
+	var defenses = get_tree().get_nodes_in_group("Defenses")
+	for df in defenses:
+		if is_instance_valid(df) and df.health > 0:
+			var side = 1 if df.global_position.x < 2816.0 else 2
+			if side == my_side and global_position.distance_to(df.global_position) < 120.0:
+				candidates.append(df)
 				
 	var nearest: Node2D = null
 	var min_dist = 99999.0

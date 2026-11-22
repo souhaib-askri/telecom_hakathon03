@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://test_transferred_01"]
+
+[ext_resource type="Script" path="res://tools/test_transferred_features.gd" id="1_test"]
+
+[node name="TestTransferred" type="Node"]
+script = ExtResource("1_test")

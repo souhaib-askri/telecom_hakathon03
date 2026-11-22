@@ -13,6 +13,9 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/props/storage_crate.png" id="14_crate"]
 [ext_resource type="Texture2D" path="res://assets/sprites/props/cable_spool.png" id="15_spool"]
 [ext_resource type="Texture2D" path="res://assets/sprites/props/telecom_junction_box.png" id="16_jbox"]
+[ext_resource type="PackedScene" path="res://scenes/scrapbound/Workshop.tscn" id="17_workshop"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/ost_day_ambient.ogg" id="18_day_bgm"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/dusk_siren.wav" id="19_siren"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_horiz"]
 size = Vector2(5700, 40)
@@ -117,6 +120,9 @@ texture = ExtResource("15_spool")
 position = Vector2(3866, 770)
 scale = Vector2(0.45, 0.45)
 texture = ExtResource("16_jbox")
+
+[node name="DayNightModulate" type="CanvasModulate" parent="."]
+color = Color(1.05, 1.02, 0.95, 1)
 
 [node name="ArenaBounds" type="StaticBody2D" parent="." groups=["WorldBounds"]]
 collision_layer = 1
@@ -272,7 +278,24 @@ zoom = Vector2(1.05, 1.05)
 
 [node name="ScrapboundHUD" parent="CanvasLayer" instance=ExtResource("5_hud")]
 
+[node name="Workshop1" parent="." instance=ExtResource("17_workshop")]
+position = Vector2(1766, 860)
+workshop_id = 1
+
+[node name="Workshop2" parent="." instance=ExtResource("17_workshop")]
+position = Vector2(4582, 860)
+workshop_id = 2
+
+[node name="DayBGM" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("18_day_bgm")
+volume_db = -6.0
+autoplay = true
+
+[node name="DuskSiren" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("19_siren")
+volume_db = -3.0
+
 [node name="BattleBGM" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_music")
 volume_db = -6.0
-autoplay = true
+autoplay = false

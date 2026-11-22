@@ -18,6 +18,21 @@ var monster_scene = preload("res://scenes/scrapbound/Monster.tscn")
 var scrap_item_scene = preload("res://scenes/scrapbound/ScrapItem.tscn")
 var barrier_scene = preload("res://scenes/scrapbound/Barrier.tscn")
 var defense_tower_scene = preload("res://scenes/scrapbound/DefenseTower.tscn")
+var deployable_turret_scene = preload("res://scenes/scrapbound/DeployableTurret.tscn")
+
+# Raid System & Day/Night Cycle
+enum RaidPhase { DAY, DUSK, NIGHT_RAID }
+var raid_phase: RaidPhase = RaidPhase.DAY
+var current_day: int = 1
+var day_timer: float = 35.0
+const DAY_DURATION: float = 35.0
+const DUSK_DURATION: float = 6.0
+var raid_monsters_total: int = 6
+var raid_monsters_spawned: int = 0
+var raid_monsters_alive: int = 0
+var raid_spawn_timer: float = 0.5
+var raids_cleared_count: int = 0
+var day_scrap_spawn_timer: float = 2.0
 
 @onready var p1: ScrapboundPlayer = $Player1
 @onready var p2: ScrapboundPlayer = $Player2
@@ -27,6 +42,12 @@ var defense_tower_scene = preload("res://scenes/scrapbound/DefenseTower.tscn")
 @onready var recycler2: ScrapRecycler = $Recycler2
 @onready var hud: ScrapboundHUD = $CanvasLayer/ScrapboundHUD
 @onready var camera: Camera2D = $Camera2D
+@onready var workshop1: Area2D = get_node_or_null("Workshop1")
+@onready var workshop2: Area2D = get_node_or_null("Workshop2")
+@onready var day_night_modulate: CanvasModulate = get_node_or_null("DayNightModulate")
+@onready var day_bgm: AudioStreamPlayer = get_node_or_null("DayBGM")
+@onready var dusk_siren: AudioStreamPlayer = get_node_or_null("DuskSiren")
+@onready var battle_bgm: AudioStreamPlayer = get_node_or_null("BattleBGM")
 
 var local_target_player: ScrapboundPlayer = null
 
@@ -89,6 +110,14 @@ func _ready() -> void:
 	if hud:
 		hud.set_local_player(my_local_id)
 		hud.rematch_requested.connect(_on_rematch_pressed)
+	if hud.has_signal("skip_day_requested"):
+		hud.skip_day_requested.connect(_on_skip_day_pressed)
+
+	if multiplayer.is_server():
+		start_day_phase()
+	else:
+		if hud:
+			hud.update_day_phase(current_day, day_timer)
 		
 	if tower1: tower1.tower_destroyed.connect(_on_tower_destroyed)
 	if tower2: tower2.tower_destroyed.connect(_on_tower_destroyed)
@@ -104,22 +133,59 @@ func _physics_process(delta: float) -> void:
 	if camera and local_target_player and is_instance_valid(local_target_player):
 		camera.position = camera.position.lerp(local_target_player.position, delta * 6.0)
 		
+	# Daylight modulation interpolation
+	var target_modulate: Color = Color(1.05, 1.02, 0.95, 1.0)
+	match raid_phase:
+		RaidPhase.DAY:
+			target_modulate = Color(1.05, 1.02, 0.95, 1.0)
+		RaidPhase.DUSK:
+			target_modulate = Color(1.0, 0.65, 0.42, 1.0)
+		RaidPhase.NIGHT_RAID:
+			target_modulate = Color(0.38, 0.42, 0.62, 1.0)
+
+	if day_night_modulate:
+		day_night_modulate.color = day_night_modulate.color.lerp(target_modulate, delta * 2.5)
+
 	# Match timing and monster spawning are strictly server-authoritative
 	if multiplayer.is_server():
 		match_timer -= delta
 		sync_timer_net.rpc(match_timer)
 		if hud:
 			hud.update_timer(match_timer)
-		
+
 		if match_timer <= 0.0:
 			end_match_server()
 			return
-			
-		spawn_timer -= delta
-		if spawn_timer <= 0.0:
-			spawn_timer = spawn_interval
-			spawn_interval = max(1.8, 3.5 - ((120.0 - match_timer) / 120.0) * 1.5)
-			_spawn_monster_server()
+
+		match raid_phase:
+			RaidPhase.DAY:
+				day_timer -= delta
+				if hud:
+					hud.update_day_phase(current_day, day_timer)
+				sync_day_timer_net.rpc(day_timer)
+
+				day_scrap_spawn_timer -= delta
+				if day_scrap_spawn_timer <= 0.0:
+					day_scrap_spawn_timer = randf_range(3.0, 5.0)
+					_spawn_prep_scrap()
+
+				if day_timer <= 0.0:
+					start_dusk_phase()
+
+			RaidPhase.DUSK:
+				day_timer -= delta
+				if hud:
+					hud.update_dusk_phase(day_timer)
+				sync_day_timer_net.rpc(day_timer)
+				if day_timer <= 0.0:
+					start_night_raid()
+
+			RaidPhase.NIGHT_RAID:
+				if raid_monsters_spawned < raid_monsters_total:
+					raid_spawn_timer -= delta
+					if raid_spawn_timer <= 0.0:
+						raid_spawn_timer = randf_range(0.8, 1.4)
+						_spawn_raid_wave()
 	else:
 		# Client side smooth countdown fallback between server RPC ticks
 		match_timer = max(0.0, match_timer - delta)
@@ -171,6 +237,14 @@ func on_monster_destroyed_server(_monster: Node2D, killer_id: int, pos: Vector2)
 	elif killer_id == 2:
 		p2_kills += 1
 		p2_score += 100
+
+	if raid_phase == RaidPhase.NIGHT_RAID:
+		raid_monsters_alive = max(0, raid_monsters_alive - 1)
+		sync_day_timer_net.rpc(float(raid_monsters_alive))
+		if raid_monsters_spawned >= raid_monsters_total and raid_monsters_alive <= 0:
+			raids_cleared_count += 1
+			current_day += 1
+			start_day_phase()
 		
 	# Monsters drop garbage/scraps upon dying!
 	next_entity_id += 1
@@ -229,28 +303,36 @@ func remove_scrap_item_net(item_node_name: String) -> void:
 func request_refine(player_id: int, _target_material: String = "random") -> void:
 	if not multiplayer.is_server():
 		return
-		
+
 	var target_player = p1 if player_id == 1 else p2
-	if not target_player or target_player.inventory["scrap"] < 10:
+	if not target_player or target_player.inventory.get("scrap", 0) < 1:
 		return
-		
+
 	var r_id = player_id
 	var recycler = recycler1 if r_id == 1 else recycler2
 	if not recycler:
 		return
-		
+
 	# Check distance: player must take scraps to their team's Refinery to recycle!
 	if target_player.global_position.distance_to(recycler.global_position) > 180.0:
 		return
-		
-	target_player.inventory["scrap"] -= 10
-	
-	# User requirement: raw materials are given randomly, player cannot choose
-	var raw_options = ["wood", "iron", "plastic"]
-	var reward = raw_options[randi() % raw_options.size()]
-		
+
+	target_player.inventory["scrap"] -= 1
+
+	# User requirement: 4 sorting outputs (wood: 32%, iron: 32%, plastic: 24%, battery: 12%)
+	var roll = randi_range(1, 100)
+	var reward = "wood"
+	if roll <= 32:
+		reward = "iron"
+	elif roll <= 64:
+		reward = "wood"
+	elif roll <= 88:
+		reward = "plastic"
+	else:
+		reward = "battery"
+
 	target_player.add_resource(reward, 1)
-	
+
 	if recycler:
 		recycler.play_recycle_effect_net.rpc(reward)
 	sync_inventory_net.rpc(player_id, target_player.inventory)
@@ -553,3 +635,257 @@ func _on_rematch_pressed() -> void:
 func return_to_lobby_net() -> void:
 	NetworkManager.disconnect_game()
 	get_tree().change_scene_to_file("res://scenes/scrapbound/Lobby.tscn")
+
+# -------------------------------------------------------------------------
+# RAID CYCLE & ADVANCED FABRICATION / TURRET SYSTEM
+# -------------------------------------------------------------------------
+func start_day_phase() -> void:
+	raid_phase = RaidPhase.DAY
+	day_timer = DAY_DURATION
+	if day_bgm and not day_bgm.playing:
+		day_bgm.play()
+	if battle_bgm and battle_bgm.playing:
+		battle_bgm.stop()
+	sync_raid_phase_net.rpc(RaidPhase.DAY, current_day, DAY_DURATION, 0)
+	_broadcast_full_hud_sync()
+
+func start_dusk_phase() -> void:
+	raid_phase = RaidPhase.DUSK
+	day_timer = DUSK_DURATION
+	if dusk_siren:
+		dusk_siren.play()
+	sync_raid_phase_net.rpc(RaidPhase.DUSK, current_day, DUSK_DURATION, 0)
+	_broadcast_full_hud_sync()
+
+func start_night_raid() -> void:
+	raid_phase = RaidPhase.NIGHT_RAID
+	day_timer = 0.0
+	raid_monsters_total = 6 + (current_day - 1) * 3
+	raid_monsters_spawned = 0
+	raid_monsters_alive = raid_monsters_total
+	raid_spawn_timer = 0.5
+	if day_bgm and day_bgm.playing:
+		day_bgm.stop()
+	if battle_bgm and not battle_bgm.playing:
+		battle_bgm.play()
+	sync_raid_phase_net.rpc(RaidPhase.NIGHT_RAID, current_day, 0.0, raid_monsters_total)
+	_broadcast_full_hud_sync()
+
+func _on_skip_day_pressed() -> void:
+	if not is_match_running or raid_phase != RaidPhase.DAY:
+		return
+	if multiplayer.is_server():
+		start_dusk_phase()
+	else:
+		request_skip_day_net.rpc_id(1)
+
+@rpc("any_peer", "call_local", "reliable")
+func request_skip_day_net() -> void:
+	if not multiplayer.is_server():
+		return
+	if is_match_running and raid_phase == RaidPhase.DAY:
+		start_dusk_phase()
+
+@rpc("call_local", "reliable")
+func sync_raid_phase_net(phase_val: int, day_num: int, timer_val: float, foes_alive: int) -> void:
+	raid_phase = phase_val as RaidPhase
+	current_day = day_num
+	day_timer = timer_val
+	if hud:
+		match raid_phase:
+			RaidPhase.DAY:
+				hud.update_day_phase(current_day, day_timer)
+			RaidPhase.DUSK:
+				hud.update_dusk_phase(day_timer)
+			RaidPhase.NIGHT_RAID:
+				hud.update_night_raid_phase(current_day, foes_alive)
+
+@rpc("call_local", "reliable")
+func sync_day_timer_net(timer_val: float) -> void:
+	day_timer = timer_val
+	if hud:
+		match raid_phase:
+			RaidPhase.DAY:
+				hud.update_day_phase(current_day, day_timer)
+			RaidPhase.DUSK:
+				hud.update_dusk_phase(day_timer)
+			RaidPhase.NIGHT_RAID:
+				hud.update_night_raid_phase(current_day, int(day_timer))
+
+func _spawn_prep_scrap() -> void:
+	if not multiplayer.is_server(): return
+	var p1_pos = Vector2(randf_range(400.0, 2400.0), randf_range(300.0, 1300.0))
+	next_entity_id += 1
+	spawn_scrap_drop_net.rpc(next_entity_id, "scrap", randi_range(6, 12), p1_pos)
+
+	var p2_pos = Vector2(randf_range(3216.0, 5216.0), randf_range(300.0, 1300.0))
+	next_entity_id += 1
+	spawn_scrap_drop_net.rpc(next_entity_id, "scrap", randi_range(6, 12), p2_pos)
+
+func _spawn_raid_wave() -> void:
+	if not multiplayer.is_server() or raid_monsters_spawned >= raid_monsters_total:
+		return
+
+	var y1 = randf_range(300.0, 1300.0)
+	var x1 = randf_range(200.0, 600.0) if randf() < 0.5 else randf_range(2200.0, 2600.0)
+	next_entity_id += 1
+	spawn_monster_net.rpc(next_entity_id, Vector2(x1, y1))
+	raid_monsters_spawned += 1
+
+	if raid_monsters_spawned < raid_monsters_total:
+		var y2 = randf_range(300.0, 1300.0)
+		var x2 = randf_range(3016.0, 3416.0) if randf() < 0.5 else randf_range(5016.0, 5416.0)
+		next_entity_id += 1
+		spawn_monster_net.rpc(next_entity_id, Vector2(x2, y2))
+	raid_monsters_spawned += 1
+
+	sync_day_timer_net.rpc(float(raid_monsters_alive))
+
+# Workshop Crafting RPC
+@rpc("any_peer", "call_local", "reliable")
+func request_craft_item(p_id: int, item_id: String) -> void:
+	if not multiplayer.is_server():
+		return
+	var player = p1 if p_id == 1 else p2
+	if not player or not is_instance_valid(player):
+		return
+
+	var inv = player.inventory
+	var wood = inv.get("wood", 0)
+	var iron = inv.get("iron", 0)
+	var plastic = inv.get("plastic", 0)
+	var battery = inv.get("battery", 0)
+
+	var success = false
+	var msg = ""
+
+	match item_id:
+		"Welder":
+			player.set_weapon("Welder")
+			success = true
+			msg = "Welder Tool equipped!"
+		"Rifle":
+			if iron >= 1:
+				player.inventory["iron"] -= 1
+				_unlock_and_equip_weapon(player, p_id, "Rifle")
+				success = true
+				msg = "Assault Rifle crafted & equipped!"
+			else:
+				msg = "Need 1 Iron to craft Rifle!"
+		"Shotgun":
+			if wood >= 1 and iron >= 1:
+				player.inventory["wood"] -= 1
+				player.inventory["iron"] -= 1
+				_unlock_and_equip_weapon(player, p_id, "Shotgun")
+				success = true
+				msg = "Pump Shotgun crafted & equipped!"
+			else:
+				msg = "Need 1 Wood & 1 Iron for Shotgun!"
+		"Flamethrower":
+			if plastic >= 1 and iron >= 1:
+				player.inventory["plastic"] -= 1
+				player.inventory["iron"] -= 1
+				_unlock_and_equip_weapon(player, p_id, "Flamethrower")
+				success = true
+				msg = "Flamethrower crafted & equipped!"
+			else:
+				msg = "Need 1 Plastic & 1 Iron for Flamethrower!"
+		"TowerRepair":
+			if wood >= 1 and plastic >= 1:
+				var tower = tower1 if p_id == 1 else tower2
+				if tower and is_instance_valid(tower):
+					player.inventory["wood"] -= 1
+					player.inventory["plastic"] -= 1
+					tower.health = min(1000, tower.health + 250)
+					tower.sync_tower_hp_net.rpc(tower.health)
+					success = true
+					msg = "Tower repaired (+250 HP)!"
+				else:
+					msg = "Tower not available!"
+			else:
+				msg = "Need 1 Wood & 1 Plastic for Tower Repair!"
+		"PlayerHeal":
+			if plastic >= 1:
+				if player.health < player.max_health:
+					player.inventory["plastic"] -= 1
+					player.health = min(player.max_health, player.health + 40)
+					player.sync_health_net.rpc(player.health)
+					success = true
+					msg = "Suit repaired (+40 HP)!"
+				else:
+					msg = "Player already at full HP!"
+			else:
+				msg = "Need 1 Plastic for Suit Medikit!"
+		"Turret":
+			if iron >= 1 and wood >= 1 and battery >= 1:
+				player.inventory["iron"] -= 1
+				player.inventory["wood"] -= 1
+				player.inventory["battery"] -= 1
+				player.inventory["turrets"] = player.inventory.get("turrets", 0) + 1
+				success = true
+				msg = "Sentry Turret built! Press [B] to deploy!"
+			elif iron >= 2 and wood >= 1:
+				player.inventory["iron"] -= 2
+				player.inventory["wood"] -= 1
+				player.inventory["turrets"] = player.inventory.get("turrets", 0) + 1
+				success = true
+				msg = "Sentry Turret built! Press [B] to deploy!"
+			else:
+				msg = "Need (1 Iron + 1 Wood + 1 Battery) or (2 Iron + 1 Wood)!"
+		_:
+			msg = "Unknown craft item: " + item_id
+
+	_broadcast_full_hud_sync()
+
+	var peer_id = player.get_multiplayer_authority()
+	notify_craft_result_net.rpc_id(peer_id, success, msg)
+
+@rpc("call_local", "reliable")
+func notify_craft_result_net(success: bool, msg: String) -> void:
+	if hud and hud.has_method("show_craft_feedback"):
+		hud.show_craft_feedback(success, msg)
+
+# Deployable Turret RPC
+@rpc("any_peer", "call_local", "reliable")
+func request_deploy_turret(builder_id: int, spawn_pos: Vector2) -> void:
+	if not multiplayer.is_server():
+		return
+	var player = p1 if builder_id == 1 else p2
+	if not player or not is_instance_valid(player):
+		return
+
+	var turrets_count = player.inventory.get("turrets", 0)
+	if turrets_count < 1:
+		var inv = player.inventory
+		var iron = inv.get("iron", 0)
+		var wood = inv.get("wood", 0)
+		var battery = inv.get("battery", 0)
+		if iron >= 1 and wood >= 1 and battery >= 1:
+			player.inventory["iron"] -= 1
+			player.inventory["wood"] -= 1
+			player.inventory["battery"] -= 1
+		elif iron >= 2 and wood >= 1:
+			player.inventory["iron"] -= 2
+			player.inventory["wood"] -= 1
+		else:
+			var peer = player.get_multiplayer_authority()
+			notify_craft_result_net.rpc_id(peer, false, "Need Sentry Turret in inventory or materials!")
+			return
+	else:
+		player.inventory["turrets"] -= 1
+
+	next_entity_id += 1
+	spawn_turret_net.rpc(next_entity_id, spawn_pos, builder_id, player.inventory)
+
+@rpc("call_local", "reliable")
+func spawn_turret_net(t_id: int, spawn_pos: Vector2, builder_id: int, updated_inv: Dictionary) -> void:
+	var p = p1 if builder_id == 1 else p2
+	if p:
+		p.inventory = updated_inv
+
+	var t = deployable_turret_scene.instantiate()
+	t.name = "Turret_%d" % t_id
+	t.global_position = spawn_pos
+	t.team_id = builder_id
+	add_child(t)
+	_broadcast_full_hud_sync()
