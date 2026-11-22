@@ -20,10 +20,11 @@ var unlocked_weapons: Array = ["Basic"]
 var was_switch_key_down: bool = false
 var was_craft_key_down: bool = false
 var shoot_cooldown: float = 0.0
-var shoot_rate: float = 0.22
-var bullet_damage: int = 25
-var bullet_speed: float = 520.0
-var is_piercing: bool = false
+var shoot_rate: float = 0.12
+var bullet_damage: int = 22
+var bullet_speed: float = 380.0
+var bullet_range: float = 82.0
+var is_piercing: bool = true
 
 var aim_direction: Vector2 = Vector2.RIGHT
 var current_aim_angle: float = 0.0

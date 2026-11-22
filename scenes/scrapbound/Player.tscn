@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://player_scrapbound01"]
+[gd_scene load_steps=16 format=3 uid="uid://player_scrapbound01"]
 
 [ext_resource type="Script" path="res://scripts/scrapbound/Player.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/sprites/characters/sami/sami_idle.png" id="2_idle"]
@@ -9,9 +9,10 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/characters/sami/sami_walk_3.png" id="7_w3"]
 [ext_resource type="Texture2D" path="res://assets/sprites/characters/sami/sami_walk_4.png" id="8_w4"]
 [ext_resource type="Texture2D" path="res://assets/sprites/characters/sami/sami_walk_5.png" id="9_w5"]
-[ext_resource type="Texture2D" path="res://assets/sprites/weapons/gun_rifle.png" id="10_gun"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/sentry_shoot.wav" id="11_audio"]
+[ext_resource type="Texture2D" path="res://assets/sprites/weapons/gun_welder.png" id="10_gun"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/weld_resonate.wav" id="11_audio"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx/scrap_pickup.wav" id="12_pickup"]
+[ext_resource type="Texture2D" path="res://assets/sprites/fx/welding_spark.png" id="13_spark"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_player"]
 animations = [{
@@ -80,6 +81,12 @@ position = Vector2(6, -13)
 position = Vector2(16, 0)
 scale = Vector2(0.58, 0.58)
 texture = ExtResource("10_gun")
+
+[node name="WelderSpark" type="Sprite2D" parent="WeaponPivot"]
+visible = false
+position = Vector2(36, 0)
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("13_spark")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_1")

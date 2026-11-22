@@ -4,9 +4,10 @@ class_name ScrapboundHUD
 signal rematch_requested()
 
 # Textures
-const TEX_HEART_FULL = preload("res://assets/sprites/ui/minecraft/heart_full.png")
-const TEX_HEART_EMPTY = preload("res://assets/sprites/ui/minecraft/heart_empty.png")
-const TEX_ARMOR_FULL = preload("res://assets/sprites/ui/minecraft/armor_full.png")
+const TEX_HEART_FULL = preload("res://assets/sprites/ui/cyber/cyber_pip_health_full.png")
+const TEX_HEART_EMPTY = preload("res://assets/sprites/ui/cyber/cyber_pip_health_empty.png")
+const TEX_ARMOR_FULL = preload("res://assets/sprites/ui/cyber/cyber_pip_tower_full.png")
+const TEX_ARMOR_EMPTY = preload("res://assets/sprites/ui/cyber/cyber_pip_tower_empty.png")
 
 # Minecraft Top Info
 @onready var my_title_label: Label = %MyTitleLabel
@@ -196,9 +197,9 @@ func _setup_minecraft_hearts() -> void:
 	heart_icons.clear()
 	for i in range(10):
 		var tr = TextureRect.new()
-		tr.custom_minimum_size = Vector2(11, 11)
+		tr.custom_minimum_size = Vector2(13, 13)
 		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		tr.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		tr.texture = TEX_HEART_FULL
 		health_hearts_container.add_child(tr)
 		heart_icons.append(tr)
@@ -210,9 +211,9 @@ func _setup_minecraft_armor() -> void:
 	armor_icons.clear()
 	for i in range(10):
 		var tr = TextureRect.new()
-		tr.custom_minimum_size = Vector2(11, 11)
+		tr.custom_minimum_size = Vector2(13, 13)
 		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		tr.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		tr.texture = TEX_ARMOR_FULL
 		tower_armor_container.add_child(tr)
 		armor_icons.append(tr)
@@ -301,13 +302,25 @@ func update_player_ui(
 			my_inv.get("material_c", 0), my_inv.get("material_d", 0)
 		]
 		
-	# Update Hidden Bars
+	# Update Progress Bars
 	if my_health_bar:
 		my_health_bar.value = my_hp
+		if my_hp > 50:
+			my_health_bar.modulate = Color(0.2, 0.95, 0.45)
+		elif my_hp > 25:
+			my_health_bar.modulate = Color(1.0, 0.85, 0.25)
+		else:
+			my_health_bar.modulate = Color(1.0, 0.3, 0.3)
 	if my_tower_bar:
 		my_tower_bar.value = my_tower
+		if my_tower > 500:
+			my_tower_bar.modulate = Color(0.0, 0.85, 1.0)
+		elif my_tower > 250:
+			my_tower_bar.modulate = Color(1.0, 0.75, 0.2)
+		else:
+			my_tower_bar.modulate = Color(1.0, 0.25, 0.25)
 		
-	# Update Minecraft 10 Hearts
+	# Update Cyber 10 Vitality Cells
 	var full_hearts = clamp(int(ceil(float(my_hp) / 10.0)), 0, 10)
 	for i in range(heart_icons.size()):
 		var icon = heart_icons[i]
@@ -320,20 +333,22 @@ func update_player_ui(
 	if my_health_val:
 		my_health_val.text = "%d HP" % my_hp
 		
-	# Update Minecraft 10 Shields/Armor
+	# Update Cyber 10 Tower Shield Cells
 	var full_shields = clamp(int(ceil(float(my_tower) / 100.0)), 0, 10)
 	for i in range(armor_icons.size()):
 		var icon = armor_icons[i]
 		if i < full_shields:
+			icon.texture = TEX_ARMOR_FULL
 			icon.modulate = Color.WHITE
 		else:
-			icon.modulate = Color(1.0, 1.0, 1.0, 0.2)
+			icon.texture = TEX_ARMOR_EMPTY
+			icon.modulate = Color(1.0, 1.0, 1.0, 0.35)
 	if my_tower_val:
 		my_tower_val.text = "%d/1000" % my_tower
 		
-	# Update Minecraft Hotbar Slots
+	# Update Tactical Hotbar Slots
 	if my_weapon_label:
-		my_weapon_label.text = "🗡️\n" + my_wpn
+		my_weapon_label.text = "⚡ WPN [1]\n" + my_wpn
 		
 	var can_wall = (my_inv.get("wood", 0) >= 2 or my_inv.get("plastic", 0) >= 2 or my_inv.get("iron", 0) >= 2)
 	if lbl_wall:
@@ -614,22 +629,29 @@ func show_results(p1_kills: int, p1_score: int, p1_tower_hp: int, p2_kills: int,
 		else: my_win = true
 		
 	if my_win:
-		winner_label.text = "VICTORY! YOU WIN! 🏆"
-		winner_label.modulate = Color(0.2, 0.9, 0.4)
+		winner_label.text = "MISSION ACCOMPLISHED // VICTORY 🏆"
+		winner_label.modulate = Color(0.2, 0.95, 0.5)
 	elif opp_win:
-		winner_label.text = "DEFEAT! OPPONENT WON! 💀"
+		winner_label.text = "CRITICAL FAILURE // SECTOR LOST 💀"
 		winner_label.modulate = Color(1.0, 0.3, 0.3)
 	else:
-		winner_label.text = "DRAW MATCH! 🤝"
-		winner_label.modulate = Color(1.0, 1.0, 1.0)
+		winner_label.text = "SECTOR STANDSTILL // DRAW 🤝"
+		winner_label.modulate = Color(0.0, 0.85, 1.0)
 		
 	if results_detail:
 		results_detail.text = (
-			"=== FINAL MATCH REPORT ===\n\n" +
-			"PLAYER 1 (Blue):\n" +
-			"  Kills: %d (%d pts) | Tower HP: %d (+%d bonus) | TOTAL: %d\n\n" % [p1_kills, p1_score, p1_tower_hp, p1_tower_hp * 2, p1_total] +
-			"PLAYER 2 (Orange):\n" +
-			"  Kills: %d (%d pts) | Tower HP: %d (+%d bonus) | TOTAL: %d" % [p2_kills, p2_score, p2_tower_hp, p2_tower_hp * 2, p2_total]
+			"═══════════════════════════════════════════════════════════\n" +
+			"        TACTICAL DEBRIEF // SECTOR OVERWATCH REPORT        \n" +
+			"═══════════════════════════════════════════════════════════\n\n" +
+			"  [P1 BLUE VANGUARD]\n" +
+			"    • Target Eliminations : %d (%d PTS)\n" +
+			"    • Tower Integrity     : %d HP (+%d DEFENSE BONUS)\n" +
+			"    • Tactical Combat Pts : %d TOTAL\n\n" % [p1_kills, p1_score, p1_tower_hp, p1_tower_hp * 2, p1_total] +
+			"  [P2 ORANGE VANGUARD]\n" +
+			"    • Target Eliminations : %d (%d PTS)\n" +
+			"    • Tower Integrity     : %d HP (+%d DEFENSE BONUS)\n" +
+			"    • Tactical Combat Pts : %d TOTAL\n" % [p2_kills, p2_score, p2_tower_hp, p2_tower_hp * 2, p2_total] +
+			"═══════════════════════════════════════════════════════════"
 		)
 
 func _on_rematch_pressed() -> void:

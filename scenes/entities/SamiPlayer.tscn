@@ -10,10 +10,10 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/characters/sami/sami_walk_4.png" id="8_w4"]
 [ext_resource type="Texture2D" path="res://assets/sprites/characters/sami/sami_walk_5.png" id="9_w5"]
 [ext_resource type="Texture2D" path="res://assets/sprites/characters/sami/sami_weld.png" id="10_weld"]
-[ext_resource type="Texture2D" path="res://assets/sprites/weapons/gun_rifle.png" id="11_gun"]
-[ext_resource type="Texture2D" path="res://assets/sprites/weapons/muzzle_flash.png" id="12_flash"]
+[ext_resource type="Texture2D" path="res://assets/sprites/weapons/gun_welder.png" id="11_gun"]
+[ext_resource type="Texture2D" path="res://assets/sprites/fx/welding_spark.png" id="12_flash"]
 [ext_resource type="AudioStream" path="res://assets/audio/sfx/weld_resonate.wav" id="13_weld_sfx"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/sentry_shoot.wav" id="14_shoot_sfx"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/weld_resonate.wav" id="14_shoot_sfx"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_sami"]
 animations = [{
