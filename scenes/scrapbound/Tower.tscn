@@ -1,40 +1,56 @@
 [gd_scene format=3 uid="uid://x42e60n01bwv"]
 
 [ext_resource type="Script" uid="uid://bwnsf5w2t23si" path="res://scripts/scrapbound/Tower.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://d3anlnaf883bw" path="res://assets/sprites/props/telecom_tower_dq2l.png" id="2_fallback"]
+[ext_resource type="Texture2D" path="res://assets/sprites/environment/telecom_big_tower_isolated.png" id="2_big_tower"]
 [ext_resource type="Texture2D" uid="uid://cbsw6idy2myvo" path="res://assets/sprites/weapons/shockwave_ring.png" id="4_glow"]
+[ext_resource type="Texture2D" path="res://assets/sprites/turrets/gemini_radar_turret.png" id="5_radar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
-size = Vector2(70, 50)
+size = Vector2(180, 70)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
 bg_color = Color(0.18, 0.8, 0.44, 1)
 
 [node name="Tower" type="StaticBody2D" unique_id=1579338621 groups=["Towers"]]
+y_sort_enabled = true
 collision_layer = 129
 collision_mask = 6
 script = ExtResource("1_script")
 
 [node name="EmissionGlow" type="Sprite2D" parent="." unique_id=1845201401]
 modulate = Color(0.2, 0.85, 1, 0.8)
-position = Vector2(0, -20)
-scale = Vector2(0.8, 0.8)
+position = Vector2(0, -635)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("4_glow")
 
 [node name="TowerSprite" type="Sprite2D" parent="." unique_id=343909477]
+position = Vector2(0, -320)
+scale = Vector2(1, 1)
+texture = ExtResource("2_big_tower")
+
+[node name="RadarStation" type="Node2D" parent="." unique_id=202488911]
+position = Vector2(-55, -2)
+
+[node name="RadarSprite" type="Sprite2D" parent="RadarStation" unique_id=202488912]
 position = Vector2(0, -48)
 scale = Vector2(0.24, 0.24)
-texture = ExtResource("2_fallback")
+texture = ExtResource("5_radar")
+
+[node name="RadarPing" type="Sprite2D" parent="RadarStation" unique_id=202488913]
+modulate = Color(0.2, 0.85, 1, 0.5)
+position = Vector2(0, -84)
+scale = Vector2(0.08, 0.08)
+texture = ExtResource("4_glow")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2117543333]
-position = Vector2(1, 97)
+position = Vector2(0, 35)
 shape = SubResource("RectangleShape2D_1")
 
 [node name="HealthBar" type="ProgressBar" parent="." unique_id=1702468848]
 offset_left = -44.0
-offset_top = -215.0
+offset_top = -665.0
 offset_right = 44.0
-offset_bottom = -207.0
+offset_bottom = -657.0
 theme_override_styles/fill = SubResource("StyleBoxFlat_fill")
 max_value = 1000.0
 value = 1000.0
@@ -42,12 +58,12 @@ show_percentage = false
 
 [node name="NameLabel" type="Label" parent="." unique_id=983265123]
 offset_left = -90.0
-offset_top = -233.0
+offset_top = -685.0
 offset_right = 90.0
-offset_bottom = -217.0
+offset_bottom = -669.0
 theme_override_font_sizes/font_size = 11
 text = "P1 TELECOM TOWER"
 horizontal_alignment = 1
 
 [node name="SpawnPoint" type="Marker2D" parent="." unique_id=1910448760]
-position = Vector2(65, 68)
+position = Vector2(65, 80)
